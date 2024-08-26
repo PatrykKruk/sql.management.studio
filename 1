@@ -1,0 +1,86 @@
+select VacationHours, CAST(VacationHours as float)/8 as 'ile dni wolnych pozostał0'
+from HumanResources.Employee;
+
+--ponisze zapytanie bledne. rozne wartosci 
+select BusinessEntityID
+from HumanResources.Employee;
+
+select substring(LoginID,17,20) + ' is a ' + JobTitle as 'Kim jest?'
+from HumanResources.Employee;
+
+select BusinessEntityID, JobTitle
+from HumanResources.Employee
+where MaritalStatus='M';
+
+
+select BusinessEntityID, JobTitle
+from HumanResources.Employee
+where JobTitle='design engineer';
+
+select BusinessEntityID, JobTitle, HireDate, OrganizationLevel
+from HumanResources.Employee
+where OrganizationLevel=2 or OrganizationLevel=4;
+
+select BusinessEntityID, JobTitle, HireDate, OrganizationLevel
+from HumanResources.Employee
+where OrganizationLevel<2 and Gender='F';
+
+--źle najpierw robi and później or, potrzebny nawias
+select BusinessEntityID, JobTitle, HireDate, OrganizationLevel
+from HumanResources.Employee
+where OrganizationLevel<2 and Gender='F' or Gender='M';
+
+select BusinessEntityID, JobTitle, HireDate, OrganizationLevel
+from HumanResources.Employee
+where OrganizationLevel<2 and (Gender='F' or Gender='M');
+
+select BusinessEntityID, SickLeaveHours
+from HumanResources.Employee 
+where SickLeaveHours between 40 and 50;
+
+select BusinessEntityID, SickLeaveHours
+from HumanResources.Employee 
+where SickLeaveHours in(41,45,50);
+
+select *
+from Person.CountryRegion
+where Name like 'A%';
+
+select *
+from Person.CountryRegion
+where Name like '_o%';
+
+select *
+from Person.CountryRegion
+where CountryRegionCode like '[ABCE]%';
+
+
+select *
+from HumanResources.Employee
+where OrganizationLevel is null;
+
+select *
+from HumanResources.JobCandidate
+where BusinessEntityID is not null;
+
+select *
+from HumanResources.Employee
+order by OrganizationLevel;
+
+select *
+from HumanResources.Employee
+order by JobTitle desc;
+
+select BusinessEntityID,JobTitle as "Stanowisko pracownika"
+from HumanResources.Employee
+order by "Stanowisko pracownika" desc;
+
+
+select BusinessEntityID,JobTitle as "Stanowisko pracownika", HireDate
+from HumanResources.Employee
+where MaritalStatus='M'
+order by 2 desc, HireDate;
+
+select SafetyStockLevel, ReorderPoint, name, Color
+from Production.Product
+where (SafetyStockLevel=1000 and Name like '%race%') or (ReorderPoint in(375, 600) and Color like 'S%');
