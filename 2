@@ -1,0 +1,91 @@
+exec sp_help 'humanresources.employee';
+
+select NationalIDNumber as NowyNumer
+from HumanResources.Employee
+order by NowyNumer;
+
+select cast(NationalIDNumber as bigint) as NowyNumer
+from HumanResources.Employee
+order by NowyNumer;
+
+select cast(VacationHours as float)/8 
+from HumanResources.Employee;
+
+select GETDATE() as "Aktualna data z godziną", 
+cast(getdate() as date) as "Aktualna data";
+
+select hiredate, cast(getdate() as date) as "Aktualna Data", 
+DATEDIFF(year,Hiredate,cast(getdate() as date)) as "Ile lat to już minęło"
+from HumanResources.Employee;
+
+select 'Today is a ' + DATENAME(weekday,getdate()) + ', ' +
+convert(varchar(10),getdate(),105) as "jaki dziś dzień";
+
+select cast(VacationHours as float)/8, str(cast(VacationHours as float)/8,4,3)
+from HumanResources.Employee;
+
+select ISNUMERIC(businessentityid)
+from HumanResources.Employee;
+
+select ISNUMERIC(NationalIDNumber)
+from HumanResources.Employee;
+
+select isdate('20240827');
+
+select ISDATE(cast(hiredate as char))
+from HumanResources.Employee;
+
+select BusinessEntityID, StartDate, EndDate
+from HumanResources.EmployeeDepartmentHistory;
+
+select BusinessEntityID, StartDate, isnull(EndDate,GETDATE())
+from HumanResources.EmployeeDepartmentHistory;
+
+select JobCandidateID, ISNULL(businessentityID,0) as businessentityid
+from HumanResources.JobCandidate
+order by JobCandidateID;
+
+select JobCandidateID, ISNULL(cast(businessentityID as char), 'Nie dostał się') as businessentityid
+from HumanResources.JobCandidate
+order by JobCandidateID;
+
+select coalesce(null,null,cast(5 as char),'Darek');
+
+select MaritalStatus,Gender,nullif(maritalstatus,gender)
+from HumanResources.Employee;
+
+select BusinessEntityID,rate,
+	rate + 10,
+	rate - 10,
+	rate * 1.1,
+	rate/3
+from HumanResources.EmployeePayHistory;
+
+select 3500 % 1500, 3500 / 1500, cast(3500 as float) / 1500, 3500.0/1500;
+
+select round(1.24,0), round(-3.67,0), round(12.34,1), round(1.679784,2);
+
+select BusinessEntityID,rate,
+	round(rate,2),
+	round(rate,2,1)
+from HumanResources.EmployeePayHistory;
+
+select BusinessEntityID,rate,
+	round(rate,-1),
+	round(rate,-2)
+from HumanResources.EmployeePayHistory;
+
+select BusinessEntityID,rate,
+	floor(rate),
+	ceiling(rate)
+from HumanResources.EmployeePayHistory;
+
+
+select round(rand()*(5-1),0)+1;
+
+select FLOOR(12.34),
+	floor(-12.34),
+	ceiling(12.34),
+	ceiling(-12.34),
+	round(-12.34,0),
+	round(12.34,0);
