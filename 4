@@ -1,0 +1,158 @@
+select * 
+from HumanResources.EmployeeDepartmentHistory;
+
+select * 
+from HumanResources.Shift;
+
+select *
+from HumanResources.EmployeeDepartmentHistory,HumanResources.Shift;
+
+select *
+from HumanResources.EmployeeDepartmentHistory as EDH,HumanResources.Shift as S
+where EDH.ShiftID=S.ShiftID;
+
+select EDH.BusinessEntityID,s.Name
+from HumanResources.EmployeeDepartmentHistory as EDH,HumanResources.Shift as S
+where EDH.ShiftID=S.ShiftID
+order by BusinessEntityID;
+
+select EDH.BusinessEntityID,s.Name
+from HumanResources.EmployeeDepartmentHistory as EDH
+inner join HumanResources.Shift as S on  EDH.ShiftID=S.ShiftID
+order by BusinessEntityID;
+
+select EDH.BusinessEntityID,P.FirstName,P.LastName,S.Name
+from HumanResources.EmployeeDepartmentHistory as EDH
+inner join HumanResources.Shift as S on  EDH.ShiftID=S.ShiftID
+inner join Person.Person as P on EDH.BusinessEntityID=P.BusinessEntityID
+order by BusinessEntityID;
+
+select e.OrganizationNode,D.*
+from HumanResources.Employee as E
+inner join Production.Document as D on E.OrganizationNode=D.DocumentNode;
+
+select e.OrganizationNode,D.*
+from HumanResources.Employee as E
+left join Production.Document as D on E.OrganizationNode=D.DocumentNode;
+
+select e.OrganizationNode,D.*
+from HumanResources.Employee as E
+right join Production.Document as D on E.OrganizationNode=D.DocumentNode;
+
+select e.OrganizationNode,D.*
+from HumanResources.Employee as E
+full join Production.Document as D on E.OrganizationNode=D.DocumentNode;
+
+select e.OrganizationNode,D.*
+from HumanResources.Employee as E
+cross join Production.Document as D;
+
+select e.OrganizationNode,D.*
+from HumanResources.Employee as E
+inner join Production.Document as D on E.OrganizationNode=D.DocumentNode
+where d.DocumentLevel=1;
+
+select BusinessEntityID,VacationHours
+from HumanResources.Employee
+where VacationHours>(select VacationHours
+					from HumanResources.Employee
+					where BusinessEntityID=49);
+
+
+select BusinessEntityID,VacationHours
+from HumanResources.Employee
+where VacationHours>(select VacationHours
+					from HumanResources.Employee
+					where BusinessEntityID=49)
+and MaritalStatus=(select MaritalStatus
+					from HumanResources.Employee
+					where BusinessEntityID=49);
+
+select BusinessEntityID,VacationHours
+from HumanResources.Employee
+where VacationHours=(select min(VacationHours)
+					from HumanResources.Employee);
+
+
+select JobTitle, avg(vacationhours) as "Suma godzin wolnych dla stanowiska"
+from HumanResources.Employee
+group by JobTitle
+having avg(vacationhours)>(select avg(vacationhours)
+							from HumanResources.Employee);
+
+
+select *
+from(select BusinessEntityID, VacationHours
+		from HumanResources.Employee) as Podzapytanie
+where businessentityID between 100 and 150;
+
+select *
+from Person.BusinessEntityAddress;
+
+
+select *
+from Person.Address;		
+
+
+select B.BusinessEntityID,
+		(select city
+		from Person.Address as A
+		where B.AddressID=a.AddressID) as "Miasto"
+from Person.BusinessEntityAddress as B;
+
+select B.BusinessEntityID, A.city
+from Person.BusinessEntityAddress as B
+inner join Person.Address as A on B.AddressID=a.AddressID;
+
+select distinct NumberEmployees
+from sales.vStoreWithDemographics
+where YearOpened='1990';
+
+select Name,YearOpened, NumberEmployees
+from sales.vStoreWithDemographics
+where NumberEmployees in (select NumberEmployees
+							from sales.vStoreWithDemographics
+							where YearOpened='1990')
+and YearOpened<>'1990'
+order by NumberEmployees;
+
+
+select Name,YearOpened, NumberEmployees
+from sales.vStoreWithDemographics
+where NumberEmployees < any (select NumberEmployees
+							from sales.vStoreWithDemographics
+							where YearOpened='1990')
+and YearOpened<>'1990'
+order by NumberEmployees;
+
+
+select Name,YearOpened, NumberEmployees
+from sales.vStoreWithDemographics
+where NumberEmployees < all (select NumberEmployees
+							from sales.vStoreWithDemographics
+							where YearOpened='1990')
+and YearOpened<>'1990'
+order by NumberEmployees;
+
+
+select e.OrganizationNode,d.*
+from Production.Document as D 
+left join HumanResources.Employee as E on D.DocumentNode=e.OrganizationNode;
+
+
+select *
+from Production.Document as D 
+where not exists 
+(select * 
+from HumanResources.Employee as E 
+where D.DocumentNode=e.OrganizationNode);
+
+select *
+from HumanResources.JobCandidate;
+
+select *
+from HumanResources.Employee
+where BusinessEntityID not in 
+								(select BusinessEntityID
+								from HumanResources.JobCandidate
+								where BusinessEntityID is not null);
