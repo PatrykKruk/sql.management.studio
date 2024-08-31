@@ -1,0 +1,133 @@
+select SUM(SickLeaveHours)/8 as "Suma dni chorobowego"
+from HumanResources.Employee;
+
+select MAX(vacationhours) as "najwyzsza liczba godzin wolnych",
+		min(hiredate) as "najstarsza data zatrudnienia",
+		max(jobtitle) as "ostatnie w kolejnosci stanowisko"
+from HumanResources.Employee;
+
+select count(*) as "liczba rekordów"
+from Sales.SpecialOffer;
+
+select count(MaxQty) as "liczba rekordów z wartościa w kolumnie MaxQty"
+from Sales.SpecialOffer;
+
+select count(distinct type) as "liczba unikatowych rekordow w kolumnie type"
+from Sales.SpecialOffer;
+
+select avg(isnull(maxqty,0)) as "średnia ze wszystkich pól w kolumnie maxqty"
+from Sales.SpecialOffer;
+
+select sum(vacationhours) as "Suma wolnych godzin"
+from HumanResources.Employee;
+
+select jobtitle, sum(vacationhours) as "Suma wolnych godzin"
+from HumanResources.Employee
+group by JobTitle;
+
+select territoryID, SUM(salesYTD),
+		max(salesYTD),
+		min(salesYTD),
+		avg(salesYTD)
+from Sales.SalesPerson
+group by TerritoryID;
+
+select jobtitle,gender ,sum(vacationhours) as "Suma wolnych godzin"
+from HumanResources.Employee
+where maritalStatus='M'
+group by gender, JobTitle;
+
+select jobtitle,gender ,sum(vacationhours) as "Suma wolnych godzin"
+from HumanResources.Employee
+group by gender, JobTitle
+having sum(vacationhours)>60;
+
+select name, 
+		case name when 'English' then 'Angielski'
+				when 'Spanish' then 'Hiszpanski'
+				when 'Arabic' then convert(varchar,GETDATE(),102)
+				when 'Thai' then left(name,1)
+				else name
+		end as "Nowa kolumna"
+from Production.Culture;
+
+select BusinessEntityID, Gender, VacationHours,
+		case gender when 'F' then VacationHours + 16
+					else VacationHours
+		end as "Wolne po zamianie"
+from HumanResources.Employee;
+
+select Description, DiscountPct,
+		case when DiscountPct <= 0.1 then 'Mała obniżka'
+		 when DiscountPct <= 0.2 then 'Średnia obniżka'
+		 when DiscountPct <= 0.3 then 'Dobra obniżka'
+		 when DiscountPct <= 0.4 then 'Średnia obniżka'
+		else 'Prawie darmo'
+	end as "Status obiniżki"
+from Sales.SpecialOffer;
+
+select SalesYTD, SalesLastYear,
+		case when SalesYTD>SalesLastYear then 'Więcej niż w ubiegłym roku'
+			else 'Zostało ' + cast(SalesLastYear-SalesYTD as varchar)
+		end as "Porównianie lat"
+from sales.SalesPerson
+
+select BusinessEntityID, MaritalStatus, Gender, VacationHours,
+		case when MaritalStatus='M' and Gender='F' then VacationHours + 32
+			when gender='F' then VacationHours + 16
+					else VacationHours
+		end as "Wolne po zamianie"
+from HumanResources.Employee;
+
+select lower('Lubie pisać skrypty');
+
+select upper('Lubie pisać skrypty');
+
+select left('Lubie pisać skrypty',8);
+
+select right('Lubie pisać skrypty',8);
+
+select substring('Lubie pisać skrypty',4,4);
+
+select len('Lubie pisać skrypty');
+
+select charindex('s','Lubie pisać skrypty',10);
+
+select reverse('Lubie pisać skrypty');
+
+select upper(reverse('Lubie pisać skrypty'));
+
+select replace('Lubie pisać skrypty','pisać','czytać');
+
+select ltrim('        Lubie pisać skrypty     ');
+
+select replicate('Lubie pisać skrypty',3);
+
+select stuff('Lubie pisać skrypty',3,7,'Darek');
+
+select @@DATEFIRST;
+
+set datefirst 1;
+
+select @@LANGUAGE;
+
+sp_helplanguage;
+
+set language 'polish';
+
+select datename(weekday, getdate());
+
+set dateformat dmy;
+select '12-08-2024' as "Data", MONTH('12-08-2024') as "Miesiąc";
+
+select dateadd(month, 7, getdate());
+
+select datediff(month, '2015-08-12',getdate());
+
+select datename(dayofyear,getdate());
+
+select datepart(weekday,getdate());
+
+select day(getdate()), month(getdate()), year(getdate());
+
+select DATEFROMPARTS(2024,08,12);
