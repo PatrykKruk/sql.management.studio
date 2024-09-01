@@ -1,0 +1,162 @@
+truncate table HumanResources.Dzieci;
+
+truncate table HumanResources.Dzieciaczki;
+
+insert into HumanResources.Dzieciaczki
+(id,imie,nazwisko,Aktualny_wiek, data_urodzenia) values
+(1,'Adaú','Noga',5,'20140101'),
+(2,'Jasiu','Konewka',2,'20171103'),
+(3,'Wiesiek','Kromka',6,'20130315'),
+(4,'Edek','Ćmietana',2,'20170610'),
+(5,'Adaú','MĻka',4,'20150215');
+
+insert into HumanResources.Dzieci
+(imie,nazwisko,wiek, data_urodzenia) values
+('Adaú','Noga',5,'20140101'),
+('Marceli','Szpak',3,'20160314');
+
+select imie, nazwisko, aktualny_wiek, data_urodzenia
+from HumanResources.Dzieciaczki
+union 
+select imie, nazwisko, wiek, data_urodzenia
+from HumanResources.Dzieci;
+
+select imie, nazwisko, aktualny_wiek, data_urodzenia
+from HumanResources.Dzieciaczki
+union all
+select imie, nazwisko, wiek, data_urodzenia
+from HumanResources.Dzieci;
+
+select imie, nazwisko, aktualny_wiek, data_urodzenia
+from HumanResources.Dzieciaczki
+intersect
+select imie, nazwisko, wiek, data_urodzenia
+from HumanResources.Dzieci;
+
+select imie, nazwisko, aktualny_wiek, data_urodzenia
+from HumanResources.Dzieciaczki
+except
+select imie, nazwisko, wiek, data_urodzenia
+from HumanResources.Dzieci;
+
+select imie, nazwisko, aktualny_wiek, data_urodzenia,'przyjęty' as status
+from HumanResources.Dzieciaczki
+union all
+select imie, nazwisko, wiek, data_urodzenia,status
+from HumanResources.Dzieci
+order by aktualny_wiek;
+
+select imie,nazwisko
+from HumanResources.Dzieciaczki
+union
+select imie,cast(data_urodzenia as varchar)
+from HumanResources.Dzieci;
+
+with Pracownicy as
+(select p.FirstName + ' ' + p.LastName as Name,E.BirthDate
+from HumanResources.Employee as E
+inner join person.Person as P
+on E.BusinessEntityID=P.BusinessEntityID)
+
+select *
+from Pracownicy
+where BirthDate<'19700101';
+
+
+with Pracownicy as
+(select p.FirstName + ' ' + p.LastName as Name,E.BirthDate
+from HumanResources.Employee as E
+inner join person.Person as P
+on E.BusinessEntityID=P.BusinessEntityID)
+
+select *
+from Pracownicy as p1
+left join Pracownicy as p2
+on p1.Name<>p2.Name
+where p1.BirthDate=p2.BirthDate;
+
+declare @stanowisko varchar(30)
+set @stanowisko = 'Tool designer';
+
+select BusinessEntityID
+from HumanResources.Employee
+where JobTitle=@stanowisko;
+
+declare @stanowisko varchar(30) = 'Tool designer';
+
+select BusinessEntityID
+from HumanResources.Employee
+where JobTitle=@stanowisko;
+
+create function WszyscyZDepartamentu
+(@department as varchar(255)) returns varchar(255)
+as
+
+begin
+
+declare @nazwisko as varchar(255) = ''
+select @nazwisko = @nazwisko + LastName + ', ' from HumanResources.vEmployeeDepartment
+where Department = @department;
+
+return left(@nazwisko,len(@nazwisko)-1)
+
+end
+
+select distinct dbo.WszyscyZDepartamentu(Department) 
+as 'Koledzy i koleżanki z działu'
+from HumanResources.vEmployeeDepartment;
+
+drop function WszyscyZDepartamentu;
+
+select BusinessEntityID, VacationHours, 
+rank() over (order by vacationhours desc) as "Ranking godzin wolnych"
+from HumanResources.Employee;
+
+select BusinessEntityID, VacationHours, 
+dense_rank() over (order by vacationhours desc) as "Ranking godzin wolnych"
+from HumanResources.Employee;
+
+select BusinessEntityID, VacationHours, 
+row_number() over (order by vacationhours desc) as "Ranking godzin wolnych"
+from HumanResources.Employee;
+
+select BusinessEntityID, VacationHours, 
+ntile(4) over (order by vacationhours desc) as "Ranking godzin wolnych"
+from HumanResources.Employee;
+
+select BusinessEntityID, HireDate, 
+dense_rank() over (order by HireDate) as "Czas zatrudnienia"
+from HumanResources.Employee;
+
+select BusinessEntityID, JobTitle, 
+dense_rank() over (order by Jobtitle desc) as "Pozycja według alfabetu"
+from HumanResources.Employee;
+
+select BusinessEntityID,Gender, HireDate, 
+dense_rank() over (partition by gender order by HireDate) as "Czas zatrudnienia"
+from HumanResources.Employee;
+
+select BusinessEntityID,Gender,MaritalStatus, HireDate, 
+dense_rank() over (partition by gender,Maritalstatus order by HireDate) as "Czas zatrudnienia"
+from HumanResources.Employee;
+
+select *
+from HumanResources.Dzieciaczki;
+
+begin tran 
+
+insert into HumanResources.Dzieciaczki
+(id, imie, nazwisko, Aktualny_wiek, data_urodzenia)
+values (6,'Darek','Wedel',8,'20110412');
+
+save tran a;
+
+update HumanResources.Dzieciaczki
+set nazwisko='Salata'
+where id=3;
+
+select *
+from HumanResources.Dzieciaczki;
+
+rollback tran a;
+commit tran;
