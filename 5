@@ -1,0 +1,162 @@
+create table HumanResources.Dzieci
+(
+id int,
+imie varchar(255),
+nazwisko varchar(255),
+wiek int,
+data_urodzenia date
+);
+
+select *
+from HumanResources.Dzieci;
+
+select BusinessEntityID, FirstName, LastName
+into HumanResources.Rodzice
+from Person.Person
+where LastName like 'S%' and BusinessEntityID between 1 and 290;
+
+select *
+from HumanResources.Rodzice;
+
+alter table HumanResources.Dzieci
+add miasto varchar (30);
+
+alter table HumanResources.Dzieci
+alter column miasto int;
+
+alter table HumanResources.Dzieci
+drop column miasto;
+
+sp_rename 'HumanResources.Dzieci', 'Dzieciaczki';
+
+sp_rename 'HumanResources.Dzieciaczki.Wiek','Aktualny_wiek','column';
+
+select *
+from HumanResources.Dzieciaczki;
+
+create view sales.najwiekszych10zamowien as
+select top 10 SalesOrderID, sum(unitprice) as Suma
+from sales.SalesOrderDetail
+group by SalesOrderID
+order by suma desc;
+
+select *
+from Sales.najwiekszych10zamowien;
+
+
+insert into HumanResources.Dzieciaczki values (1,'Adaś','Noga',5,'20140101');
+
+insert into HumanResources.Dzieciaczki (Aktualny_wiek,nazwisko,imie,id)
+values (3,'Ręka','Michaś',2);
+
+insert into HumanResources.Dzieciaczki (id,imie,nazwisko,aktualny_wiek,data_urodzenia)
+values (3,'Wiesiek','Kromka',6,'20130406'),
+(4,'Marcin','Konopka',3,'20161212'),
+(5,'Edek','Kos',8,'20110701');
+
+
+
+select *
+from HumanResources.Dzieciaczki;
+
+alter table HumanResources.Dzieciaczki
+alter column id int not null;
+
+alter table HumanResources.Dzieciaczki
+add constraint klucz_id primary key(id);
+
+alter table HumanResources.Dzieciaczki
+add unique(id);
+
+insert into HumanResources.Dzieciaczki values (5,'Daniel','Jelen',4,'20190101');
+
+create table HumanResources.Dzieci
+(id int not null identity(1,1) constraint klucz_id_dzieci primary key,
+imie varchar(255),
+nazwisko varchar(255),
+wiek int,
+data_urodzenia date
+);
+
+alter table HumanResources.Dzieci
+add status varchar(10) default 'przyjęty';
+
+insert into HumanResources.Dzieci (imie,nazwisko,wiek,data_urodzenia) values 
+('Darek','Kanarek',12,'20190101');
+
+insert into HumanResources.Dzieci (imie,nazwisko,wiek,data_urodzenia,status) values 
+('Andrzej','Kanarek',7,'20110101','odrzucony');
+
+select *
+from HumanResources.Dzieci;
+
+select *
+from HumanResources.rodzice;
+
+insert into HumanResources.Rodzice
+select BusinessEntityID, FirstName, LastName
+from Person.Person
+where LastName like 'B%' and BusinessEntityID < 400;
+
+select * 
+from HumanResources.Dzieciaczki;
+
+update HumanResources.Dzieciaczki
+set nazwisko='Mazak'
+where id=5;
+
+update HumanResources.Dzieciaczki
+set nazwisko='Kredka', Aktualny_wiek=6
+where id=5;
+
+update HumanResources.Dzieciaczki
+set nazwisko=(select nazwisko
+				from HumanResources.Dzieciaczki
+				where id=1),
+	Aktualny_wiek=(select Aktualny_wiek
+					from HumanResources.Dzieciaczki
+					where id=3)
+where id=5;
+
+
+delete from HumanResources.Dzieciaczki
+where id=3;
+
+update HumanResources.Dzieci
+set imie='Adaś' 
+where id=2;
+
+delete from HumanResources.Dzieciaczki
+where imie=(select imie
+			from HumanResources.Dzieci
+			where id=2);
+
+CREATE TABLE test
+(
+	BusinessEntityID int NOT NULL,
+	PersonType nchar(2) NOT NULL,
+	NameStyle dbo.NameStyle NOT NULL CONSTRAINT DF_Person_NameStyle  DEFAULT ((0)),
+	Title nvarchar(8) NULL,
+	FirstName dbo.Name NOT NULL,
+	MiddleName dbo.Name NULL,
+	LastName dbo.Name NOT NULL,
+	Suffix nvarchar(10) NULL,
+	EmailPromotion int NOT NULL CONSTRAINT DF_Person_EmailPromotion  DEFAULT ((0)),
+	AdditionalContactInfo xml(CONTENT Person.AdditionalContactInfoSchemaCollection) NULL,
+	Demographics xml(CONTENT Person.IndividualSurveySchemaCollection) NULL,
+	rowguid uniqueidentifier ROWGUIDCOL  NOT NULL CONSTRAINT DF_Person_rowguid  DEFAULT (newid()),
+	ModifiedDate datetime NOT NULL CONSTRAINT DF_Person_ModifiedDate  DEFAULT (getdate())
+	);
+
+select * from test;
+
+insert into test select * from Person.Person;
+go 50
+
+select count(*) from test;
+
+delete test;
+
+truncate table test;
+
+drop table test;
